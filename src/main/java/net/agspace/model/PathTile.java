@@ -28,7 +28,36 @@ public class PathTile {
     }
 
     public boolean isTraversed(){
-        return this.isTraversed();
+        return this.traversed;
+    }
+
+    /**
+     * Sets this tile as a goal.
+     */
+    public void setGoal(boolean value){
+        this.goal = value;
+        if (value){
+            this.start = false;
+            this.traversed = false;
+        }
+    }
+
+    /**
+     * Sets this tile as a start location.
+     */
+    public void setStart(boolean value){
+        this.start = value;
+        if (value){
+            this.goal = false;
+            this.traversed = false;
+        }
+    }
+
+    /**
+     * Sets this tile as traversed.
+     */
+    public void setTraversed(boolean value){
+        this.traversed = value;
     }
 
 }
