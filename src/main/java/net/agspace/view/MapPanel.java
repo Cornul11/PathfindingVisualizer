@@ -2,7 +2,10 @@ package net.agspace.view;
 
 import net.agspace.control.PanelClickListener;
 import net.agspace.model.PathMap;
-import net.agspace.model.PathTile;
+import net.agspace.model.tiles.GoalTile;
+import net.agspace.model.tiles.ObstacleTile;
+import net.agspace.model.tiles.PathTile;
+import net.agspace.model.tiles.StartTile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,10 +24,6 @@ public class MapPanel extends JPanel implements Observer {
     public static final int BORDER_SIZE = 2;
     //Colors for some aspects of rendering.
     private static final Color BORDER_COLOR = new Color(5, 0, 75);
-    private static final Color TILE_COLOR_DEFAULT = Color.white;
-    private static final Color TILE_COLOR_TRAVERSED = new Color(255, 233, 233);
-    private static final Color TILE_COLOR_START = new Color(0, 192, 5);
-    private static final Color TILE_COLOR_GOAL = new Color(255, 144, 0);
 
     public MapPanel(PathMap map){
         this.map = map;
@@ -71,14 +70,18 @@ public class MapPanel extends JPanel implements Observer {
                 int displayX = x*TILE_SIZE + (x+1)*BORDER_SIZE;
                 int displayY = y*TILE_SIZE + (y+1)*BORDER_SIZE;
                 PathTile tile = map.getTile(x, y);
-                if (tile.isStart()){
-                    g.setColor(TILE_COLOR_START);
-                } else if (tile.isGoal()){
-                    g.setColor(TILE_COLOR_GOAL);
+                if (tile instanceof StartTile){
+                    g.setColor(StartTile.COLOR);
+                } else if (tile instanceof GoalTile){
+                    g.setColor(GoalTile.COLOR);
+                } else if (tile instanceof ObstacleTile){
+                    g.setColor(ObstacleTile.COLOR);
+                } else if (tile.isInFrontier()){
+                    g.setColor(PathTile.COLOR_FRONTIER);
                 } else if (tile.isTraversed()){
-                    g.setColor(TILE_COLOR_TRAVERSED);
+                    g.setColor(PathTile.COLOR_TRAVERSED);
                 } else {
-                    g.setColor(TILE_COLOR_DEFAULT);
+                    g.setColor(PathTile.COLOR);
                 }
                 g.fillRect(displayX, displayY, TILE_SIZE, TILE_SIZE);
             }

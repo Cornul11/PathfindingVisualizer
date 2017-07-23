@@ -13,12 +13,13 @@ public class Window extends JFrame {
 
     public Window(PathMap pathMap){
         this.mapPanel = new MapPanel(pathMap);
-        initFrame();
+        initFrame(pathMap);
     }
 
-    private void initFrame(){
+    private void initFrame(PathMap map){
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(this.mapPanel);
+        this.setJMenuBar(new MenuBar(map));
         this.pack();
         this.setLocationRelativeTo(null);
         this.setResizable(false);

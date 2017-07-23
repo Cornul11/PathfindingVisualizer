@@ -1,7 +1,9 @@
 package net.agspace.control;
 
 import net.agspace.model.PathMap;
-import net.agspace.model.PathTile;
+import net.agspace.model.tiles.GoalTile;
+import net.agspace.model.tiles.PathTile;
+import net.agspace.model.tiles.StartTile;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -33,10 +35,10 @@ public class PanelClickListener implements MouseListener {
             PathTile tile = map.getTile(tileX, tileY);
             switch (e.getButton()) {
                 case 1:
-                    map.setGoal(tileX, tileY, !tile.isGoal());
+                    map.setGoal(tileX, tileY, !(tile instanceof GoalTile));
                     break;
                 case 3:
-                    map.setStart(tileX, tileY, !tile.isStart());
+                    map.setStart(tileX, tileY, !(tile instanceof StartTile));
                     break;
             }
         }

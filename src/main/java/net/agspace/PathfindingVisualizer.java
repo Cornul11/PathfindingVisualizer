@@ -11,7 +11,9 @@ public class PathfindingVisualizer {
 
     public static void main(String[] args){
 
-        PathMap map = new PathMap(20, 20);
+        PathMap map = new PathMap(40, 40);
+        map.setStart(6, 8, true);
+        map.setGoal(15, 15, true);
         Window window = new Window(map);
 
     }
