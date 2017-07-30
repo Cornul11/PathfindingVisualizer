@@ -19,12 +19,16 @@ public class Window extends JFrame {
     private void initFrame(PathMap map){
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(this.mapPanel);
-        this.setJMenuBar(new MenuBar(map));
+        this.setJMenuBar(new MenuBar(map, this));
         this.pack();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
         this.setEnabled(true);
+    }
+
+    public PathMap getMap(){
+        return this.mapPanel.getMap();
     }
 
 }

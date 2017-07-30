@@ -1,6 +1,9 @@
 package net.agspace.control.actions.pathMenu;
 
 import net.agspace.control.actions.ActionItem;
+import net.agspace.model.PathMap;
+import net.agspace.pathfinding.AStarPathfinding;
+import net.agspace.pathfinding.Pathfinding;
 
 import java.awt.event.ActionEvent;
 
@@ -10,12 +13,15 @@ import java.awt.event.ActionEvent;
  */
 public class AStarPathAction extends ActionItem {
 
-    public AStarPathAction(){
+    private AStarPathfinding aStar;
+
+    public AStarPathAction(PathMap map){
         super("A-Star");
+        this.aStar = new AStarPathfinding(map, Pathfinding.FIRST_SOLUTION);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        new Thread(this.aStar).start();
     }
 }

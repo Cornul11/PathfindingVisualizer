@@ -8,6 +8,8 @@ import java.awt.*;
  */
 public class PathTile {
 
+    public static final char CHAR = 'P';
+
     public static final Color COLOR = Color.white;
     public static final Color COLOR_FRONTIER = new Color(246, 255, 102);
     public static final Color COLOR_TRAVERSED = new Color(193, 228, 255);
@@ -17,10 +19,14 @@ public class PathTile {
     //Is this tile next in line to be evaluated?
     private boolean inFrontier = false;
 
-    protected Point point;
+    private Point point;
 
     public PathTile(Point point){
         this.point = point;
+    }
+
+    public PathTile(int x, int y){
+        this.point = new Point(x, y);
     }
 
     public boolean isTraversed(){

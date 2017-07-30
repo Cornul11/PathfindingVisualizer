@@ -1,10 +1,14 @@
 package net.agspace.model;
 
 import net.agspace.model.tiles.GoalTile;
+import net.agspace.model.tiles.ObstacleTile;
 import net.agspace.model.tiles.PathTile;
 import net.agspace.model.tiles.StartTile;
 
 import java.awt.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -26,6 +30,10 @@ public class PathMap extends Observable {
                 tileMap[x][y] = new PathTile(new Point(x,y));
             }
         }
+    }
+
+    public PathMap(String filename){
+        this.load(filename);
     }
 
     /**
@@ -64,33 +72,15 @@ public class PathMap extends Observable {
     }
 
     /**
-     * Sets a tile as a goal.
-     * @param x The x coordinate.
-     * @param y The y coordinate.
-     * @param value True if a goal, false otherwise.
+     * Sets a tile to a new tile. The location is given in the Tile object.
+     * This will update each time, so it is not intended for rapid drawing.
+     * @param tile The tile to set.
      */
-    public void setGoal(int x, int y, boolean value){
-        if (value){
-            tileMap[x][y] = new GoalTile(new Point(x,y));
-        } else {
-            tileMap[x][y] = new PathTile(new Point(x,y));
+    public void setTile(PathTile tile){
+        if (isValidPoint(tile.getPoint())){
+            this.tileMap[tile.getX()][tile.getY()] = tile;
+            this.manualNotify();
         }
-        this.manualNotify();
-    }
-
-    /**
-     * Sets a tile as a start.
-     * @param x The x coordinate.
-     * @param y The y coordinate.
-     * @param value True if a start, false otherwise.
-     */
-    public void setStart(int x, int y, boolean value){
-        if (value){
-            tileMap[x][y] = new StartTile(new Point(x,y));
-        } else {
-            tileMap[x][y] = new PathTile(new Point(x,y));
-        }
-        this.manualNotify();
     }
 
     /**
@@ -164,21 +154,106 @@ public class PathMap extends Observable {
         Point originPoint = originTile.getPoint();
         Point up = new Point(originPoint);
         up.translate(0, -1);
-        if (isValidPoint(up))
+        if (isValidPoint(up) && !(this.getTile(up) instanceof ObstacleTile))
             tiles.add(this.getTile(up));
         Point right = new Point(originPoint);
         right.translate(1, 0);
-        if (isValidPoint(right))
+        if (isValidPoint(right) && !(this.getTile(right) instanceof ObstacleTile))
             tiles.add(this.getTile(right));
         Point down = new Point(originPoint);
         down.translate(0, 1);
-        if (isValidPoint(down))
+        if (isValidPoint(down) && !(this.getTile(down) instanceof ObstacleTile))
             tiles.add(this.getTile(down));
         Point left = new Point(originPoint);
         left.translate(-1, 0);
-        if (isValidPoint(left))
+        if (isValidPoint(left) && !(this.getTile(left) instanceof ObstacleTile))
             tiles.add(this.getTile(left));
         return tiles;
+    }
+
+    /**
+     * Clears traversed, frontier, and path markers.
+     */
+    public void clearPaths(){
+        for (int x = 0; x < this.getWidth(); x++){
+            for (int y = 0; y < this.getHeight(); y++){
+                this.tileMap[x][y].setTraversed(false);
+                this.tileMap[x][y].setInFrontier(false);
+            }
+        }
+        this.manualNotify();
+    }
+
+    /**
+     * Saves the map to the specified file.
+     * @param filename The name of the file to save to.
+     */
+    public void save(String filename){
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"))){
+            StringBuilder sb = new StringBuilder();
+            sb.append(this.getWidth()).append('\n').append(this.getHeight()).append('\n');
+            for (int x = 0; x < this.getWidth(); x++){
+                for (int y = 0; y < this.getHeight(); y++){
+                    if (this.getTile(x, y) instanceof StartTile) {
+                        sb.append(StartTile.CHAR);
+                    } else if (this.getTile(x, y) instanceof GoalTile){
+                        sb.append(GoalTile.CHAR);
+                    } else if (this.getTile(x, y) instanceof ObstacleTile){
+                        sb.append(ObstacleTile.CHAR);
+                    } else {
+                        sb.append(PathTile.CHAR);
+                    }
+                }
+                sb.append('\n');
+            }
+            writer.write(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads a map from a file.
+     * @param filename The name of the file to load from.
+     */
+    public void load(String filename){
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(filename));
+            int width = Integer.parseInt(lines.remove(0));
+            int height = Integer.parseInt(lines.remove(0));
+            this.tileMap = new PathTile[width][height];
+            for (int x = 0; x < width; x++){
+                for (int y = 0; y < height; y++){
+                    switch (lines.get(y).charAt(x)){
+                        case StartTile.CHAR:
+                            this.tileMap[x][y] = new StartTile(x, y);
+                            break;
+                        case GoalTile.CHAR:
+                            this.tileMap[x][y] = new GoalTile(x, y);
+                            break;
+                        case ObstacleTile.CHAR:
+                            this.tileMap[x][y] = new ObstacleTile(x, y);
+                            break;
+                        default:
+                            this.tileMap[x][y] = new PathTile(x, y);
+                    }
+                }
+            }
+            this.manualNotify();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Clears the current map of any tiles other than default path tiles.
+     */
+    public void clear(){
+        for (int x = 0; x < this.getWidth(); x++){
+            for (int y = 0; y < this.getHeight(); y++){
+                this.tileMap[x][y] = new PathTile(x, y);
+            }
+        }
     }
 
 }

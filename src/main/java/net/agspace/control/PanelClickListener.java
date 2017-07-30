@@ -2,6 +2,7 @@ package net.agspace.control;
 
 import net.agspace.model.PathMap;
 import net.agspace.model.tiles.GoalTile;
+import net.agspace.model.tiles.ObstacleTile;
 import net.agspace.model.tiles.PathTile;
 import net.agspace.model.tiles.StartTile;
 
@@ -34,11 +35,26 @@ public class PanelClickListener implements MouseListener {
         if (tileX < map.getWidth() && tileY < map.getHeight()) {
             PathTile tile = map.getTile(tileX, tileY);
             switch (e.getButton()) {
+                case 2:
+                    if (map.getTile(tileX, tileY) instanceof  GoalTile){
+                        map.setTile(new PathTile(tileX, tileY));
+                    } else {
+                        map.setTile(new GoalTile(tileX, tileY));
+                    }
+                    break;
                 case 1:
-                    map.setGoal(tileX, tileY, !(tile instanceof GoalTile));
+                    if (map.getTile(tileX, tileY) instanceof ObstacleTile){
+                        map.setTile(new PathTile(tileX, tileY));
+                    } else {
+                        map.setTile(new ObstacleTile(tileX, tileY));
+                    }
                     break;
                 case 3:
-                    map.setStart(tileX, tileY, !(tile instanceof StartTile));
+                    if (map.getTile(tileX, tileY) instanceof  StartTile){
+                        map.setTile(new PathTile(tileX, tileY));
+                    } else {
+                        map.setTile(new StartTile(tileX, tileY));
+                    }
                     break;
             }
         }

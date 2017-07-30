@@ -8,6 +8,10 @@ import net.agspace.model.tiles.StartTile;
 /**
  * @author Andrew Lalis
  * Base class for all pathfinding algorithms.
+ * Each algorithm which is a subclass of Pathfinding will need to implement the method {@code step}.
+ * Each algorithm signals that it is done by setting the {@code finished} flag to true.
+ * Some algorithms use separate data structures, so it is not feasible to keep them here, but instead
+ * each algorithm creates its own containers and lists.
  */
 public abstract class Pathfinding implements Runnable {
 
@@ -16,7 +20,7 @@ public abstract class Pathfinding implements Runnable {
 
     //Constants for possible solutions.
     public static final int FIRST_SOLUTION = 1;
-    public static final int ALL_SOLUTION = 2;
+    public static final int ALL_SOLUTIONS = 2;
 
     //Map object to store data.
     protected PathMap map;
@@ -26,7 +30,6 @@ public abstract class Pathfinding implements Runnable {
     protected StartTile[] startPoints;
     //Integer corresponding to constants for solution strategies.
     protected int solutionStrategy;
-
     //Flag to determine if the solution has been found.
     protected boolean finished = false;
 

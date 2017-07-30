@@ -104,4 +104,8 @@ public class MapPanel extends JPanel implements Observer {
             this.repaint();
         }
     }
+
+    public PathMap getMap(){
+        return this.map;
+    }
 }
